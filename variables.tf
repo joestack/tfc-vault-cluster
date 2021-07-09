@@ -27,27 +27,10 @@ variable "network_address_space" {
   default     = "172.16.0.0/16"
 }
 
-# variable "data_dir" {
-#   description = "vault config option"
-#   default     = "/opt/vault"
-# }
-
-# variable "bind_addr" {
-#   description = "vault config option"
-#   default     = "0.0.0.0"
-# }
-# variable "datacenter" {
-#   default = "dc1"
-# }
-
-# variable "region" {
-#   default = "global"
-# }
-
 
 variable "server_count" {
   description = "amount of vault servers (odd number 1,3, max 5)"
-  default     = "3"
+  default     = "1"
 }
 
 variable "server_name" {

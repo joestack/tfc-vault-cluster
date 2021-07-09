@@ -7,6 +7,10 @@ data "template_file" "vault_server" {
     vault_join          = var.tag_value
     node_name           = format("${var.server_name}-%02d", count.index +1)
     vault_version       = var.vault_version
+    vault_config_dir    = "/etc/vault.d"
+    vault_env_vars      = "/etc/vault.d/vault.conf"
+    vault_profile_script = "/etc/profile.d/vault.sh"
+    vault_path           = "/usr/bin/vault"
   }
 }
 
