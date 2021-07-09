@@ -174,7 +174,6 @@ cat <<EOF > ${systemd_dir}/consul-online.sh
 set -e
 set -o pipefail
 
-CONSUL_HTTP_ADDR=${1:-"http://127.0.0.1:8500"}
 
 # waitForConsulToBeAvailable loops until the local Consul agent returns a 200
 # response at the /v1/operator/raft/configuration endpoint.
@@ -194,7 +193,7 @@ function waitForConsulToBeAvailable() {
   done
 }
 
-waitForConsulToBeAvailable "${CONSUL_HTTP_ADDR}"
+waitForConsulToBeAvailable "${consul_http_addr}"
 EOF
 
 systemctl enable consul

@@ -12,6 +12,7 @@ data "template_file" "vault_server" {
     consul_env_vars     = "/etc/consul.d/consul.conf"
     consul_profile_script = "/etc/profile.d/consul.sh"
     consul_path         = "/usr/bin/consul"
+    consul_http_addr    = "http://127.0.0.1:8500"
     vault_config_dir    = "/etc/vault.d"
     vault_env_vars      = "/etc/vault.d/vault.conf"
     vault_profile_script = "/etc/profile.d/vault.sh"
