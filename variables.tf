@@ -60,3 +60,7 @@ variable "root_block_device_size" {
 variable "vault_version" {
   default = "1.7.3"
 }
+
+variable "consul_version" {
+  default = "1.10.0"
+}

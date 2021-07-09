@@ -7,10 +7,16 @@ data "template_file" "vault_server" {
     vault_join          = var.tag_value
     node_name           = format("${var.server_name}-%02d", count.index +1)
     vault_version       = var.vault_version
+    consul_version      = var.consul_version
+    consul_config_dir   = "/etc/consul.d"
+    consul_env_vars     = "/etc/consul.d/consul.conf"
+    consul_profile_script = "/etc/profile.d/consul.sh"
+    consul_path         = "/usr/bin/consul"
     vault_config_dir    = "/etc/vault.d"
     vault_env_vars      = "/etc/vault.d/vault.conf"
     vault_profile_script = "/etc/profile.d/vault.sh"
     vault_path           = "/usr/bin/vault"
+    systemd_dir          = "/lib/systemd/system"
   }
 }
 

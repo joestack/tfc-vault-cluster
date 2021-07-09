@@ -13,13 +13,58 @@ source /etc/profile.d/ips.sh
 
 timedatectl set-timezone UTC
 apt-get -qq -y update
-apt-get install -qq -y jq wget unzip dnsutils ruby rubygems ntp git nodejs-legacy npm nginx
+apt-get install -qq -y jq wget unzip dnsutils dnsmasq dnsmasq-base ntp
 systemctl start ntp.service
 systemctl enable ntp.service
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 apt-get -qq -y update
-apt-get install vault=${vault_version}
+apt-get install vault=${vault_version} consul=${consul_version}
+
+tee ${consul_env_vars} > /dev/null <<ENVVARS
+FLAGS=-dev -enable-script-checks -ui -client 0.0.0.0
+CONSUL_HTTP_ADDR=http://127.0.0.1:8500
+ENVVARS
+
+tee ${consul_profile_script} > /dev/null <<PROFILE
+export CONSUL_HTTP_ADDR=http://127.0.0.1:8500
+PROFILE
+
+sed -i '1i nameserver 127.0.0.1\n' /etc/resolv.conf
+
+tee /etc/dnsmasq.d/consul > /dev/null <<DNSMASQ
+server=/consul/127.0.0.1#8600
+DNSMASQ
+
+systemctl enable dnsmasq
+systemctl restart dnsmasq
+
+at <<EOF >${systemd_dir}/consul.service
+[Unit]
+Description="HashiCorp Consul - A service mesh solution"
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/etc/consul.d/consul.hcl
+
+[Service]
+User=consul
+Group=consul
+EnvironmentFile=/etc/consul.d/consul.conf
+ExecStart=/usr/bin/consul agent -config-dir=/etc/consul.d/ \$FLAGS
+ExecReload=/bin/kill --signal HUP \$MAINPID
+KillMode=process
+KillSignal=SIGTERM
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable consul
+systemctl start consul
+
 
 tee ${vault_env_vars} > /dev/null <<ENVVARS
 FLAGS=-dev -dev-ha -dev-transactional -dev-root-token-id=root -dev-listen-address=0.0.0.0:8200
@@ -78,3 +123,81 @@ PROFILE
 
 setcap cap_ipc_lock=+ep ${vault_path}
 
+cat <<EOF >${systemd_dir}/vault.service
+[Unit]
+Description=Vault Agent
+Requires=consul-online.target
+After=consul-online.target
+
+[Service]
+Restart=on-failure
+EnvironmentFile=/etc/vault.d/vault.conf
+PermissionsStartOnly=true
+ExecStartPre=/sbin/setcap 'cap_ipc_lock=+ep' /usr/bin/vault
+ExecStart=/usr/bin/vault server -config /etc/vault.d \$FLAGS
+ExecReload=/bin/kill -HUP \$MAINPID
+KillSignal=SIGTERM
+User=vault
+Group=vault
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cat <<EOF > ${systemd_dir}/consul-online.service
+[Unit]
+Description=Consul Online
+Requires=consul.service
+After=consul.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/consul-online.sh
+User=consul
+Group=consul
+
+[Install]
+WantedBy=consul-online.target multi-user.target
+EOF
+
+cat <<EOF > ${systemd_dir}/consul-online.target
+[Unit]
+Description=Consul Online
+RefuseManualStart=true
+EOF
+
+cat <<EOF > ${systemd_dir}/consul-online.sh
+
+#!/bin/bash
+
+set -e
+set -o pipefail
+
+CONSUL_HTTP_ADDR=${1:-"http://127.0.0.1:8500"}
+
+# waitForConsulToBeAvailable loops until the local Consul agent returns a 200
+# response at the /v1/operator/raft/configuration endpoint.
+#
+# Parameters:
+#     None
+function waitForConsulToBeAvailable() {
+  local consul_http_addr=$1
+  local consul_leader_http_code
+
+  consul_leader_http_code=$(curl --silent --output /dev/null --write-out "%{http_code}" "${consul_http_addr}/v1/operator/raft/configuration") || consul_leader_http_code=""
+
+  while [ "x${consul_leader_http_code}" != "x200" ] ; do
+    echo "Waiting for Consul to get a leader..."
+    sleep 5
+    consul_leader_http_code=$(curl --silent --output /dev/null --write-out "%{http_code}" "${consul_http_addr}/v1/operator/raft/configuration") || consul_leader_http_code=""
+  done
+}
+
+waitForConsulToBeAvailable "${CONSUL_HTTP_ADDR}"
+EOF
+
+systemctl enable consul
+systemctl start consul
+systemctl enable vault
+systemctl start vault
