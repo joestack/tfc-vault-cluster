@@ -1,18 +1,9 @@
 
 data "template_file" "vault_server" {
   count = var.server_count
-  template = "${join("\n", tolist(
-    [
-    #file("${path.root}/templates/base.sh"),
-    file("${path.root}/templates/server.sh")
-    ]
-  ))}"
+  template = file("${path.root}/templates/server.sh")
   vars = {
     server_count        = var.server_count
-    #data_dir            = var.data_dir
-    #bind_addr           = var.bind_addr
-    #datacenter          = var.datacenter
-    #region              = var.region
     vault_join          = var.tag_value
     node_name           = format("${var.server_name}-%02d", count.index +1)
     vault_version       = var.vault_version
