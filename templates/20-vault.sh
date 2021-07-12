@@ -54,8 +54,8 @@ setcap cap_ipc_lock=+ep ${vault_path}
 cat <<EOF >${systemd_dir}/vault.service
 [Unit]
 Description=Vault Agent
-#Requires=consul-online.target
-#After=consul-online.target
+Requires=consul-online.target
+After=consul-online.target
 
 [Service]
 Restart=on-failure
