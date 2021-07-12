@@ -16,23 +16,23 @@ listener "tcp" {
     #tls_key_file = "/vault/certs/vault_key.key"
 }
 
-storage "raft" {
-    path = "/opt/vault/data"
-
-    node_id = "${node_name}"
-
-    retry_join {
-        leader_api_addr = "https://${node_name}:8200"
-    }
-
-    retry_join {
-        auto_join = "provider=aws tag_key=vault_join tag_value=${vault_join}"
-    }
-}
-
-# storage "file" {
+# storage "raft" {
 #     path = "/opt/vault/data"
+
+#     node_id = "${node_name}"
+
+#     retry_join {
+#         leader_api_addr = "https://${node_name}:8200"
+#     }
+
+#     retry_join {
+#         auto_join = "provider=aws tag_key=vault_join tag_value=${vault_join}"
+#     }
 # }
+
+storage "file" {
+    path = "/opt/vault/data"
+}
 
 ui = true
 
@@ -54,8 +54,8 @@ setcap cap_ipc_lock=+ep ${vault_path}
 cat <<EOF >${systemd_dir}/vault.service
 [Unit]
 Description=Vault Agent
-Requires=consul-online.target
-After=consul-online.target
+#Requires=consul-online.target
+#After=consul-online.target
 
 [Service]
 Restart=on-failure
