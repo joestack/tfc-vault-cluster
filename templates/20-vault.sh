@@ -16,19 +16,19 @@ listener "tcp" {
     #tls_key_file = "/vault/certs/vault_key.key"
 }
 
-# storage "raft" {
-#     path = "/opt/vault/data"
-
-#     node_id = "${node_name}"
-
-#     retry_join {
-#         leader_api_addr = "https://${node_name}:8200"
-#     }
-# }
-
-storage "file" {
+storage "raft" {
     path = "/opt/vault/data"
+
+    node_id = "${node_name}"
+
+    retry_join {
+        leader_api_addr = "https://${node_name}:8200"
+    }
 }
+
+# storage "file" {
+#     path = "/opt/vault/data"
+# }
 
 ui = true
 
