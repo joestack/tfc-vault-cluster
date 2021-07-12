@@ -14,9 +14,11 @@ source /etc/profile.d/ips.sh
 timedatectl set-timezone UTC
 apt-get -qq -y update
 apt-get install -qq -y jq wget unzip dnsutils dnsmasq dnsmasq-base ntp
-systemctl start ntp.service
 systemctl enable ntp.service
+systemctl start ntp.service
+systemctl enable dnsmasq
+systemctl restart dnsmasq
+
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 apt-get -qq -y update
-#apt-get install vault=${vault_version} consul=${consul_version}
