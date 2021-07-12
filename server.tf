@@ -2,7 +2,8 @@
 data "template_file" "vault_server" {
   count = var.server_count
   template = join("\n", tolist([
-    file("${path.root}/templates/10-base.sh"), 
+    file("${path.root}/templates/10-base.sh"),
+    file("${path.root}/templates/15-consul.sh"), 
     file("${path.root}/templates/20-vault.sh")
     ]))
   vars = {
