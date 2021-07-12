@@ -41,3 +41,28 @@ export VAULT_TOKEN=root
 PROFILE
 
 setcap cap_ipc_lock=+ep ${vault_path}
+
+cat <<EOF >${systemd_dir}/vault.service
+[Unit]
+Description=Vault Agent
+Requires=consul-online.target
+After=consul-online.target
+
+[Service]
+Restart=on-failure
+EnvironmentFile=/etc/vault.d/vault.conf
+PermissionsStartOnly=true
+ExecStartPre=/sbin/setcap 'cap_ipc_lock=+ep' /usr/bin/vault
+ExecStart=/usr/bin/vault server -config /etc/vault.d \$FLAGS
+ExecReload=/bin/kill -HUP \$MAINPID
+KillSignal=SIGTERM
+User=vault
+Group=vault
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable vault
+systemctl start vault
