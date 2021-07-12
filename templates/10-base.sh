@@ -14,6 +14,19 @@ source /etc/profile.d/ips.sh
 timedatectl set-timezone UTC
 apt-get -qq -y update
 apt-get install -qq -y jq wget unzip dnsutils dnsmasq dnsmasq-base ntp
+
+echo "--> Setting hostname..."
+echo "${node_name}" | sudo tee /etc/hostname
+sudo hostname -F /etc/hostname
+
+echo "--> Adding hostname to /etc/hosts"
+sudo tee -a /etc/hosts > /dev/null <<EOF
+# For local resolution
+$(private_ip)  ${node_name} ${node_name}.node.consul
+EOF
+
+
+
 systemctl enable ntp.service
 systemctl start ntp.service
 systemctl enable dnsmasq
