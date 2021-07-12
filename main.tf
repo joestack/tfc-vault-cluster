@@ -102,6 +102,14 @@ resource "aws_security_group" "primary" {
     cidr_blocks = [var.whitelist_ip]
   }
 
+  # Vault
+  ingress {
+    from_port   = 8300
+    to_port     = 8302
+    protocol    = "tcp"
+    cidr_blocks = [var.whitelist_ip]
+  }
+
   # Consul
   ingress {
     from_port   = 8500
@@ -109,7 +117,15 @@ resource "aws_security_group" "primary" {
     protocol    = "tcp"
     cidr_blocks = [var.whitelist_ip]
   }
-
+  
+  # Consul
+  ingress {
+    from_port   = 8600
+    to_port     = 8600
+    protocol    = "tcp"
+    cidr_blocks = [var.whitelist_ip]
+  }
+  
   # Consul
   ingress {
     from_port   = 20000

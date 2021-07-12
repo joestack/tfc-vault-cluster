@@ -1,7 +1,11 @@
 
 data "template_file" "vault_server" {
   count = var.server_count
-  template = file("${path.root}/templates/server.sh")
+  template = ${join("\n, tolist([
+    file("${path.root}/templates/base.sh"),
+    file("${path.root}/templates/server.sh")
+    ]))}"
+
   vars = {
     server_count        = var.server_count
     vault_join          = var.tag_value
