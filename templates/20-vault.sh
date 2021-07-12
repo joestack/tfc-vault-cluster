@@ -15,23 +15,27 @@ listener "tcp" {
     #tls_key_file = "/vault/certs/vault_key.key"
 }
 
-storage "raft" {
+# storage "raft" {
+#     path = "/opt/vault/data"
+
+#     node_id = "${node_name}"
+
+#     retry_join {
+#         leader_api_addr = "https://${node_name}:8200"
+#     }
+# }
+
+storage "file" {
     path = "/opt/vault/data"
-
-    node_id = "server1"
-
-    retry_join {
-        leader_api_addr = "https://server1:8200"
-    }
 }
 
 ui = true
 
 disable_mlock = true
 
-cluster_addr = "https://server1:8201"
+cluster_addr = "https://${node_name}:8201"
 
-api_addr = "https://server1:8200"
+api_addr = "https://${node_name}:8200"
 
 EOF
 
@@ -56,8 +60,8 @@ ExecStartPre=/sbin/setcap 'cap_ipc_lock=+ep' /usr/bin/vault
 ExecStart=/usr/bin/vault server -config /etc/vault.d \$FLAGS
 ExecReload=/bin/kill -HUP \$MAINPID
 KillSignal=SIGTERM
-User=vault
-Group=vault
+User=root
+Group=root
 LimitMEMLOCK=infinity
 
 [Install]
