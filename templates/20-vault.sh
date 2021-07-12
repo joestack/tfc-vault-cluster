@@ -1,7 +1,8 @@
 apt-get install vault=${vault_version}
 
 tee ${vault_env_vars} > /dev/null <<ENVVARS
-FLAGS=-dev -dev-ha -dev-transactional -dev-root-token-id=root -dev-listen-address=0.0.0.0:8200
+#FLAGS=-dev -dev-ha -dev-transactional -dev-root-token-id=root -dev-listen-address=0.0.0.0:8200
+FLAGS=
 ENVVARS
 
 cat <<EOF >${vault_config_dir}/vault.hcl
@@ -60,8 +61,8 @@ ExecStartPre=/sbin/setcap 'cap_ipc_lock=+ep' /usr/bin/vault
 ExecStart=/usr/bin/vault server -config /etc/vault.d \$FLAGS
 ExecReload=/bin/kill -HUP \$MAINPID
 KillSignal=SIGTERM
-User=root
-Group=root
+User=vault
+Group=vault
 LimitMEMLOCK=infinity
 
 [Install]
