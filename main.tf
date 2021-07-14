@@ -180,6 +180,31 @@ data "aws_iam_policy_document" "vault-server" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid    = "VaultAWSAuthMethod"
+    effect = "Allow"
+    actions = [
+      "ec2:DescribeInstances",
+      "iam:GetInstanceProfile",
+      "iam:GetUser",
+      "iam:GetRole",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "VaultKMSUnseal"
+    effect = "Allow"
+
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:DescribeKey",
+    ]
+
+    resources = ["*"]
+  }
 }
 
 data "aws_iam_policy_document" "instance_role" {
@@ -193,6 +218,34 @@ data "aws_iam_policy_document" "instance_role" {
     }
   }
 }
+
+resource "aws_kms_key" "kms_key_vault" {
+ description             = "Vault KMS key"
+}
+
+resource "tls_private_key" "ca" {
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P384"
+}
+
+resource "tls_self_signed_cert" "ca" {
+  key_algorithm     = "${tls_private_key.ca.algorithm}"
+  private_key_pem   = "${tls_private_key.ca.private_key_pem}"
+  is_ca_certificate = true
+
+  validity_period_hours = 12
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "cert_signing",
+    "server_auth",
+  ]
+  subject {
+    common_name  = format("${var.server_name}-%02d", count.index + 1)
+    organization = "${var.name}"
+  }
+}
+
 
 output "vault_server_private_ips" {
   value = aws_instance.vault_server.*.private_ip

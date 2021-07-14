@@ -8,6 +8,7 @@ data "template_file" "vault_server" {
     ]))
   vars = {
     server_count        = var.server_count
+    region              = var.aws_region
     vault_join          = var.tag_value
     node_name           = format("${var.server_name}-%02d", count.index +1)
     vault_version       = var.vault_version
@@ -22,6 +23,7 @@ data "template_file" "vault_server" {
     vault_profile_script = "/etc/profile.d/vault.sh"
     vault_path           = "/usr/bin/vault"
     systemd_dir          = "/lib/systemd/system"
+    kms_key_id           = aws_kms_key.kms_key_vault.key_id
   }
 }
 

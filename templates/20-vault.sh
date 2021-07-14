@@ -31,6 +31,12 @@ storage "raft" {
     # }
 }
 
+seal "awskms" {
+  region     = "${region}"
+  kms_key_id = "${kms_key_id}"
+}
+
+
 # storage "file" {
 #     path = "/opt/vault/data"
 # }
