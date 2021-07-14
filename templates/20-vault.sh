@@ -1,5 +1,13 @@
 apt-get install vault=${vault_version}
 
+
+# sudo echo "${cert}" > /etc/ssl/certs/fullchain.crt
+# sudo echo "${key}" > /etc/ssl/certs/privkey.key
+# sudo echo "${ca_cert}" > /etc/ssl/certs/ca.crt
+# sudo echo "${license}" > /etc/vault.d/license.hclic
+
+
+
 tee ${vault_env_vars} > /dev/null <<ENVVARS
 #FLAGS=-dev -dev-ha -dev-transactional -dev-root-token-id=root -dev-listen-address=0.0.0.0:8200
 FLAGS=
@@ -11,9 +19,11 @@ cat <<EOF >${vault_config_dir}/vault.hcl
 listener "tcp" {
     address = "0.0.0.0:8200"
     cluster_address= "0.0.0.0:8201"
-    tls_disable = "true"
-    #tls_cert_file = "/vault/certs/vault_cert.pem"
-    #tls_key_file = "/vault/certs/vault_key.key"
+    #tls_cert_file = "/etc/ssl/certs/fullchain.crt"
+    #tls_key_file  = "/etc/ssl/certs/privkey.key"
+    #tls_disable = "true"
+    tls_cert_file = "/opt/vault/tls/vault_cert.pem"
+    tls_key_file = "/opt/vault/tls/vault_key.key"
 }
 
 storage "raft" {
