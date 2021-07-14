@@ -30,7 +30,7 @@ variable "network_address_space" {
 
 variable "server_count" {
   description = "amount of vault servers (odd number 1,3, max 5)"
-  default     = "1"
+  default     = "3"
 }
 
 variable "server_name" {
