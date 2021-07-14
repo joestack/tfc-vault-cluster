@@ -22,7 +22,7 @@ storage "raft" {
     node_id = "${node_name}"
 
     retry_join {
-        leader_api_addr = "https://${node_name}:8200"
+        #leader_api_addr = "https://${node_name}:8200"
         auto_join = "provider=aws tag_key=vault_join tag_value=${vault_join}"
     }
 
