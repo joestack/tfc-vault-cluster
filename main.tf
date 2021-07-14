@@ -241,7 +241,7 @@ resource "tls_self_signed_cert" "ca" {
     "server_auth",
   ]
   subject {
-    common_name  = format("${var.server_name}-%02d", count.index + 1)
+    common_name  = "${var.server_name}"
     organization = "${var.name}"
   }
 }
