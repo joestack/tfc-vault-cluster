@@ -38,7 +38,7 @@ resource "aws_vpc" "hashicorp_vpc" {
 
   tags = {
     #Name = "${var.name}-vpc"
-    Name = "${random_id.rnd}-vpc"
+    Name = "${random_id.rnd.b64_url}-vpc"
   }
 }
 
@@ -176,20 +176,20 @@ resource "aws_route53_record" "vault" {
 
 resource "aws_iam_instance_profile" "vault_join" {
   #name = var.name
-  name = random_id.rnd
+  name = random_id.rnd.b64_url
   role = aws_iam_role.vault_join.name
 }
 resource "aws_iam_policy" "vault_join" {
-  name = random_id.rnd
+  name = random_id.rnd.b64_url
   description = "Allows vault nodes to describe instances for joining."
   policy = data.aws_iam_policy_document.vault-server.json
 }
 resource "aws_iam_role" "vault_join" {
-  name = random_id.rnd
+  name = random_id.rnd.b64_url
   assume_role_policy = data.aws_iam_policy_document.instance_role.json
 }
 resource "aws_iam_policy_attachment" "vault_join" {
-  name = random_id.rnd
+  name = random_id.rnd.b64_url
   roles      = [aws_iam_role.vault_join.name]
   policy_arn = aws_iam_policy.vault_join.arn
 }
