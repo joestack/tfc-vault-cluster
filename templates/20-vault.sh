@@ -14,11 +14,11 @@ cat <<EOF >${vault_config_dir}/vault.hcl
 listener "tcp" {
     address = "0.0.0.0:8200"
     cluster_address= "0.0.0.0:8201"
-    #tls_cert_file = "/etc/ssl/certs/fullchain.crt"
-    #tls_key_file  = "/etc/ssl/certs/privkey.key"
+    tls_cert_file = "/etc/ssl/certs/fullchain.crt"
+    tls_key_file  = "/etc/ssl/certs/privkey.key"
     #tls_disable = "true"
-    tls_cert_file = "/opt/vault/tls/vault_cert.pem"
-    tls_key_file = "/opt/vault/tls/vault_key.key"
+    #tls_cert_file = "/opt/vault/tls/vault_cert.pem"
+    #tls_key_file = "/opt/vault/tls/vault_key.key"
 }
 
 storage "raft" {
@@ -84,6 +84,13 @@ LimitMEMLOCK=infinity
 [Install]
 WantedBy=multi-user.target
 EOF
+
+sudo mkdir --parents /etc/vault.d
+sudo echo "${cert}" > /etc/ssl/certs/fullchain.crt
+sudo echo "${key}" > /etc/ssl/certs/privkey.key
+sudo echo "${ca_cert}" > /etc/ssl/certs/ca.crt
+
+
 
 systemctl enable vault
 systemctl start vault
