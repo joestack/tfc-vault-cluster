@@ -150,8 +150,22 @@ resource "aws_security_group" "primary" {
 
 }
 
+# DNS
+
+data "aws_route53_zone" "selected" {
+  name         = "${var.dns_domain}."
+  private_zone = false
+}
 
 
+resource "aws_route53_record" "vault" {
+  count   = var.server_count
+  zone_id = data.aws_route53_zone.selected.zone_id
+  name    = lookup(aws_instance.vault_server.*.tags[count.index], "Name")
+  type    = "A"
+  ttl     = "300"
+  records = [element(aws_instance.vault_server.*.public_ip, count.index )]
+}
 
 
 resource "aws_iam_instance_profile" "vault_join" {
@@ -223,28 +237,31 @@ resource "aws_kms_key" "kms_key_vault" {
  description             = "Vault KMS key"
 }
 
-# resource "tls_private_key" "ca" {
-#   algorithm   = "ECDSA"
-#   ecdsa_curve = "P384"
-# }
+resource "tls_private_key" "ca" {
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P384"
+}
 
-# resource "tls_self_signed_cert" "ca" {
-#   key_algorithm     = "${tls_private_key.ca.algorithm}"
-#   private_key_pem   = "${tls_private_key.ca.private_key_pem}"
-#   is_ca_certificate = true
+resource "tls_self_signed_cert" "ca" {
+  key_algorithm     = "${tls_private_key.ca.algorithm}"
+  private_key_pem   = "${tls_private_key.ca.private_key_pem}"
+  is_ca_certificate = true
 
-#   validity_period_hours = 12
-#   allowed_uses = [
-#     "key_encipherment",
-#     "digital_signature",
-#     "cert_signing",
-#     "server_auth",
-#   ]
-#   subject {
-#     common_name  = "${var.server_name}"
-#     organization = "${var.name}"
-#   }
-# }
+  validity_period_hours = 12
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "cert_signing",
+    "server_auth",
+  ]
+  
+  dns_names = ["${var.dns_domain}"]
+  
+  subject {
+    common_name  = "${var.common_name}"
+    organization = "${var.organization}"
+  }
+}
 
 
 output "vault_server_private_ips" {

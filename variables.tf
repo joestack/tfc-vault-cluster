@@ -64,3 +64,18 @@ variable "vault_version" {
 variable "consul_version" {
   default = "1.10.0"
 }
+
+variable "dns_domain" {
+  description = "DNS domain suffix"
+  default     = "joestack.xyz"
+}
+
+variable "common_name" {
+  description = "Cert common name"
+  default     = "vault"
+}
+
+variable "organization" {
+  description = "Cert Organaization"
+  default     = "joestack"
+}

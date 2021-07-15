@@ -92,3 +92,4 @@ EOF
 
 systemctl enable vault
 systemctl start vault
+vault operator init
