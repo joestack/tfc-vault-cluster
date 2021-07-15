@@ -26,7 +26,7 @@ data "template_file" "vault_server" {
     systemd_dir          = "/lib/systemd/system"
     kms_key_id           = aws_kms_key.kms_key_vault.key_id
     cert                 = tls_locally_signed_cert.vault.cert_pem
-    key                  = tls_private_key.ca.private_key_pem
+    key                  = tls_private_key.vault.private_key_pem
     ca_cert              = tls_private_key.ca.public_key_pem
   }
 }
