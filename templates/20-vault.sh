@@ -28,6 +28,7 @@ storage "raft" {
 
     retry_join {
         #leader_api_addr = "https://${node_name}:8200"
+        leader_tls_servername = "${node_name}.${dns_domain}"
         auto_join = "provider=aws tag_key=vault_join tag_value=${vault_join}"
     }
 

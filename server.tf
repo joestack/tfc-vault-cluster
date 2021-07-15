@@ -28,6 +28,7 @@ data "template_file" "vault_server" {
     cert                 = tls_locally_signed_cert.vault.cert_pem
     key                  = tls_private_key.vault.private_key_pem
     ca_cert              = tls_private_key.ca.public_key_pem
+    dns_domain           = var.dns_domain
   }
 }
 

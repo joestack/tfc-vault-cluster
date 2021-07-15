@@ -283,7 +283,7 @@ resource "tls_cert_request" "vault" {
     organization = "${var.organization}"
   }
 
-  dns_names = ["${var.dns_domain}"]
+  dns_names = ["*.${var.dns_domain}"]
 
   ip_addresses   = [
      "127.0.0.1"
@@ -291,7 +291,7 @@ resource "tls_cert_request" "vault" {
 }
 
 resource "tls_locally_signed_cert" "vault" {
-  cert_request_pem = "${tls_cert_request.vault.cert_request_pem}"
+  cert_request_pem = tls_cert_request.vault.cert_request_pem
 
   ca_key_algorithm   = tls_private_key.ca.algorithm
   ca_private_key_pem = tls_private_key.ca.private_key_pem
