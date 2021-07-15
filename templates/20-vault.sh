@@ -58,8 +58,8 @@ api_addr = "https://${node_name}:8200"
 EOF
 
 tee ${vault_profile_script} > /dev/null <<PROFILE
-export VAULT_ADDR=http://127.0.0.1:8200
-export VAULT_TOKEN=root
+export VAULT_ADDR=https://127.0.0.1:8200
+export VAULT_TOKEN=
 PROFILE
 
 setcap cap_ipc_lock=+ep ${vault_path}
@@ -95,4 +95,4 @@ sudo echo "${ca_cert}" > /etc/ssl/certs/ca.crt
 
 systemctl enable vault
 systemctl start vault
-vault operator init
+#vault operator init
