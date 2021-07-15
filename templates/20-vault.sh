@@ -1,11 +1,6 @@
 apt-get install vault=${vault_version}
 
 
-# sudo echo "${cert}" > /etc/ssl/certs/fullchain.crt
-# sudo echo "${key}" > /etc/ssl/certs/privkey.key
-# sudo echo "${ca_cert}" > /etc/ssl/certs/ca.crt
-# sudo echo "${license}" > /etc/vault.d/license.hclic
-
 
 
 tee ${vault_env_vars} > /dev/null <<ENVVARS
