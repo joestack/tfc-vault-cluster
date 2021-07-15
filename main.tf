@@ -2,6 +2,11 @@ provider "aws" {
   region = var.aws_region
 }
 
+resource "random_id" "rnd" {
+  byte_length = 4
+  prefix = var.name
+}
+
 data "aws_availability_zones" "available" {}
 
 locals {
@@ -32,7 +37,8 @@ resource "aws_vpc" "hashicorp_vpc" {
   enable_dns_hostnames = "true"
 
   tags = {
-    Name = "${var.name}-vpc"
+    #Name = "${var.name}-vpc"
+    Name = "${random_id.rnd}-vpc"
   }
 }
 
@@ -169,20 +175,21 @@ resource "aws_route53_record" "vault" {
 
 
 resource "aws_iam_instance_profile" "vault_join" {
-  name = var.name
+  #name = var.name
+  name = random_id.rnd
   role = aws_iam_role.vault_join.name
 }
 resource "aws_iam_policy" "vault_join" {
-  name = var.name
+  name = random_id.rnd
   description = "Allows vault nodes to describe instances for joining."
   policy = data.aws_iam_policy_document.vault-server.json
 }
 resource "aws_iam_role" "vault_join" {
-  name = var.name
+  name = random_id.rnd
   assume_role_policy = data.aws_iam_policy_document.instance_role.json
 }
 resource "aws_iam_policy_attachment" "vault_join" {
-  name = var.name
+  name = random_id.rnd
   roles      = [aws_iam_role.vault_join.name]
   policy_arn = aws_iam_policy.vault_join.arn
 }
