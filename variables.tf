@@ -61,10 +61,6 @@ variable "vault_version" {
   default = "1.7.3"
 }
 
-variable "consul_version" {
-  default = "1.10.0"
-}
-
 variable "dns_domain" {
   description = "DNS domain suffix"
   default     = "joestack.xyz"

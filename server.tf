@@ -3,23 +3,16 @@ data "template_file" "vault_server" {
   count = var.server_count
   template = join("\n", tolist([
     file("${path.root}/templates/10-base.sh"),
-    #file("${path.root}/templates/15-consul.sh"), 
     file("${path.root}/templates/20-vault.sh")
     ]))
   vars = {
-    server_count        = var.server_count
-    region              = var.aws_region
-    vault_join          = var.tag_value
-    node_name           = format("${var.server_name}-%02d", count.index +1)
-    vault_version       = var.vault_version
-    consul_version      = var.consul_version
-    consul_config_dir   = "/etc/consul.d"
-    consul_env_vars     = "/etc/consul.d/consul.conf"
-    consul_profile_script = "/etc/profile.d/consul.sh"
-    consul_path         = "/usr/bin/consul"
-    consul_http_addr    = "http://127.0.0.1:8500"
-    vault_config_dir    = "/etc/vault.d"
-    vault_env_vars      = "/etc/vault.d/vault.conf"
+    server_count         = var.server_count
+    region               = var.aws_region
+    vault_join           = var.tag_value
+    node_name            = format("${var.server_name}-%02d", count.index +1)
+    vault_version        = var.vault_version
+    vault_config_dir     = "/etc/vault.d"
+    vault_env_vars       = "/etc/vault.d/vault.conf"
     vault_profile_script = "/etc/profile.d/vault.sh"
     vault_path           = "/usr/bin/vault"
     systemd_dir          = "/lib/systemd/system"

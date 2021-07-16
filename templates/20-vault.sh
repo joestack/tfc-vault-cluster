@@ -32,16 +32,10 @@ seal "awskms" {
   kms_key_id = "${kms_key_id}"
 }
 
-
-# storage "file" {
-#     path = "/opt/vault/data"
-# }
-
 ui = true
 
 disable_mlock = true
 
-#cluster_addr = "https://${node_name}:8201"
 cluster_addr = "https://$(private_ip):8201"
 
 api_addr = "https://${node_name}.${dns_domain}:8200"
