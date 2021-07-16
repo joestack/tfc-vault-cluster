@@ -1,8 +1,5 @@
 apt-get install vault=${vault_version}
 
-
-
-
 tee ${vault_env_vars} > /dev/null <<ENVVARS
 #FLAGS=-dev -dev-ha -dev-transactional -dev-root-token-id=root -dev-listen-address=0.0.0.0:8200
 FLAGS=
@@ -17,8 +14,6 @@ listener "tcp" {
     tls_cert_file = "/etc/ssl/certs/fullchain.crt"
     tls_key_file  = "/etc/ssl/certs/privkey.key"
     #tls_disable = "true"
-    #tls_cert_file = "/opt/vault/tls/vault_cert.pem"
-    #tls_key_file = "/opt/vault/tls/vault_key.key"
 }
 
 storage "raft" {
@@ -27,14 +22,9 @@ storage "raft" {
     node_id = "${node_name}"
 
     retry_join {
-        #leader_api_addr = "https://${node_name}:8200"
         leader_tls_servername = "${node_name}.${dns_domain}"
         auto_join = "provider=aws tag_key=vault_join tag_value=${vault_join}"
     }
-
-    # retry_join {
-    #     auto_join = "provider=aws tag_key=vault_join tag_value=${vault_join}"
-    # }
 }
 
 seal "awskms" {
