@@ -41,9 +41,10 @@ ui = true
 
 disable_mlock = true
 
-cluster_addr = "https://${node_name}:8201"
+#cluster_addr = "https://${node_name}:8201"
+cluster_addr = "https://$(private_ip):8201"
 
-api_addr = "https://${node_name}:8200"
+api_addr = "https://${node_name}.${dns_domain}:8200"
 
 EOF
 

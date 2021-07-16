@@ -4,7 +4,6 @@ provider "aws" {
 
 resource "random_id" "rnd" {
   byte_length = 3
-  prefix = "${var.name}-"
 }
 
 data "aws_availability_zones" "available" {}
