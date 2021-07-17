@@ -4,7 +4,7 @@ Deploying a Vault HA Cluster (autounseal, raft-storage) on AWS based on the foll
 
 * AWS credentials
 * a SSH key available within your selected AWS region
-* a Route53 zone to be able to create some DNS records
+* a Route53 zone to create some DNS records
 
 Just have a look into `variables.tf` and change it to your needs.
 

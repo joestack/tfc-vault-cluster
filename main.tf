@@ -281,7 +281,7 @@ resource "tls_cert_request" "vault" {
     organization = "${var.organization}"
   }
 
-  dns_names = ["*.${var.dns_domain}"]
+  dns_names = ["*.${var.dns_domain}"] #FIXME
 
   ip_addresses   = [
      "127.0.0.1"
