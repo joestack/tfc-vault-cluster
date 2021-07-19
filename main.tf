@@ -281,10 +281,15 @@ resource "tls_cert_request" "vault" {
     organization = "${var.organization}"
   }
 
-  dns_names = ["*.${var.dns_domain}"] #FIXME
+  #dns_names = ["*.${var.dns_domain}"] #FIXME
+  dns_names = [
+    "${lookup(aws_instance.vault_server.*.tags[count.index], "Name")}.${var.dns_domain}"
+  ]
 
   ip_addresses   = [
-     "127.0.0.1"
+     "127.0.0.1",
+     "${element(aws_instance.vault_server.*.public_ip, count.index )}",
+     "${element(aws_instance.vault_server.*.private_ip, count.index )}"
       ]
 }
 
