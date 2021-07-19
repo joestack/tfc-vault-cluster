@@ -36,7 +36,6 @@ resource "aws_vpc" "hashicorp_vpc" {
   enable_dns_hostnames = "true"
 
   tags = {
-    #Name = "${var.name}-vpc"
     Name = "${var.name}-vpc-${random_id.rnd.dec}"
   }
 }
@@ -304,14 +303,5 @@ resource "tls_locally_signed_cert" "vault" {
     "digital_signature",
     "server_auth",
   ]
-}
-
-
-output "vault_server_private_ips" {
-  value = aws_instance.vault_server.*.private_ip
-}
-
-output "vault_server_public_ips" {
-  value = aws_instance.vault_server[*].public_ip
 }
 
