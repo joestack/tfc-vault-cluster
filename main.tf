@@ -283,7 +283,8 @@ resource "tls_cert_request" "vault" {
 
   #dns_names = ["*.${var.dns_domain}"] #FIXME
   dns_names = [
-    "${lookup(aws_instance.vault_server.*.tags[count.index], "Name")}.${var.dns_domain}"
+    #"${lookup(aws_instance.vault_server.*.tags[count.index], "Name")}.${var.dns_domain}"
+    "${format("${var.server_name}-%02d", count.index + 1)}.${var.dns_domain}"
   ]
 
   ip_addresses   = [
